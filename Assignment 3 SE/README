@@ -1,0 +1,10 @@
+README
+
+=== Generate the Index ===
+1. Use Indexer.js to generate an index and initial PageRank file
+2. Use iteration.js to improve the PageRank file
+3. Use util_AddPR2Index.js to merge the index with the improved PageRank file
+
+
+=== Run the Search Engine ===
+1. Use SearchEngine.js (e.g: node SearchEngine.js index-pr2.js)

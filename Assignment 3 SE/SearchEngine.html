@@ -1,0 +1,139 @@
+<html><head>
+<title>Googol</title>
+<style type="text/css">
+body{font-family:sans-serif;}
+.form{display:inline-block;position:absolute;top:45%;left:50%;width:600px;height:200px;margin:-100px 0px 0px -300px;}
+
+.logo{margin-bottom:8px;font-size:500%;font-weight:bold;text-align:center;text-shadow:1px 1px 8px #000;}
+.logo1{color:#f00;}
+.logo2{color:#0f0;}
+.logo3{color:#00f;}
+.logo4{color:#ff0;}
+.logo5{color:#f0f;}
+.logo6{color:#0ff;}
+
+input{font-size:125%;}
+#query{width:495px;}
+#search{width:95px;float:right;}
+
+@keyframes popup {
+	0% {position:fixed;top:40%;left:40%;width:20%;height:20%;opacity:0;}
+	50% {opacity:1;}
+	80% {position:fixed;top:9%;left:9%;width:82%;height:82%;}
+	100% {position:fixed;top:10%;left:10%;width:80%;height:80%;}
+}
+#results{position:fixed;top:10%;left:10%;width:80%;height:80%;border:1px solid #000;background:#fff;overflow:auto;box-shadow:2px 2px 16px #000;}
+.close{display:inline-block;width:18px;height:18px;margin:8px;border-radius:4px;padding:4px;background:#f00;float:right;text-align:center;}
+.close:after{content:'X';color:#fff;font-weight:bold;}
+
+.foot{position:fixed;top:100%;left:50%;width:600px;margin:-48px 0px 0px -300px;color:#bbb;text-align:center;white-space:pre;}
+</style>
+<script type="text/javascript">
+function showEmptyResults(){
+	var a=document.getElementById('results'),b;
+	if(!a){
+		a=document.createElement('div');
+		a.id='results';
+		a.style.animation='popup .3s ease-in';
+		
+		b=document.createElement('div');
+		b.className='close';
+		b.addEventListener('click',closeResults);
+		a.appendChild(b);
+		
+		document.body.appendChild(a);
+		
+		setTimeout(function(){a.style.animation='';},350); // Set up animation to work when changed again
+	}
+}
+
+
+function updateResults(results){
+	var a=document.getElementById('results'),b,c,i;
+	if(!a){return;} // User closed results window before we got a response from the server
+	
+	for(i=0;i<results.length;++i){
+		b=document.createElement('div');
+		b.appendChild(document.createTextNode(results[i].id+': '));
+		c=document.createElement('a');
+		c.target='_blank';
+		c.href=results[i].url;
+		c.appendChild(document.createTextNode(results[i].url));
+		b.appendChild(c);
+		a.appendChild(b);
+	}
+}
+
+
+function closeResults(){
+	var a=document.getElementById('results');
+	if(a){
+		a.style.animation='popup .3s ease-out reverse';
+		setTimeout(function(){
+			a.parentNode.removeChild(a);
+			var b=document.getElementById('query');
+			b.readOnly=false;
+			b.focus();
+		},250);
+	}
+}
+
+
+function doSearch(){
+	// Set up view
+	var a=document.getElementById('search');
+	a.readOnly=true;
+	showEmptyResults();
+	
+	// Query the server
+	var x=new XMLHttpRequest();
+	x.open('POST','search.json',true);
+	x.onreadystatechange=(function(){
+		if(x.readyState===4){
+			if(x.status===200){
+				try{
+					updateResults(JSON.parse(x.responseText));
+				}catch(e){
+					alert('Error: '+e);
+				}
+			}else{
+				alert('Error: '+x.status);
+			}
+		}
+	});
+	x.timeout=5000;
+	x.send(document.getElementById('query').value);
+}
+
+
+function checkEscape(e){
+	if(e.keyCode===27){
+		closeResults();
+	}
+}
+
+
+function checkEnter(e){
+	if(e.keyCode===13){
+		e.target.blur();
+		doSearch();
+	}
+}
+
+
+window.addEventListener('load',function(){
+	window.addEventListener('keydown',checkEscape);
+	document.getElementById('search').addEventListener('click',doSearch);
+	document.getElementById('query').focus();
+	document.getElementById('query').addEventListener('keydown',checkEnter);
+});
+</script>
+</head><body>
+
+<div class="form">
+<div class="logo"><span class="logo1">G</span><span class="logo2">o</span><span class="logo3">o</span><span class="logo4">g</span><span class="logo5">o</span><span class="logo6">l</span></div>
+<div><input type="text" id="query"><input type="button" value="Search" id="search"></div>
+</div>
+
+<div class="foot">Andrew Fischer  |  Andrew Kim  |  Adil Rafaa</div>
+</body></html>

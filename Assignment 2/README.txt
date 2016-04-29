@@ -1,0 +1,1 @@
+If I find a better algorithm(s) before my demonstration, I wish to show it and have that looked at along with the current one.
